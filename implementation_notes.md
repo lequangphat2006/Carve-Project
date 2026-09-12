@@ -176,6 +176,88 @@
   - hnr_mean: -4.58 to 35.13 dB (median 19.10)
   - pct_voiced: 0.38%–98.8% (median 58.2)
 
+### C.6. Stage 5a — Audit RQ1 (Coswara A+B, 2026-09-12)
+
+**Sample (complete-case analysis):** chỉ dùng `extraction_status == 'ok'`
+- Branch A: N = 2163 (796 pos + 1367 neg)
+- Branch B: N = 2024 (657 pos + 1367 neg)
+- Lưu ý: N trong audit khác N trong C.5 (2260/2114) vì đây là complete-case
+
+**Gender distribution (raw):** male = 1810, female = 806, other = 1 (unknown khi encode)
+**Age:** min = 1 (cần check — có thể lỗi metadata), max = 87, missing = 0
+
+---
+
+#### Finding chính — SIGN FLIP ở cả 4 features sau control age+gender
+
+| Feature | Raw r_rb | Cov r_partial | Sign flip |
+|---|---|---|---|
+| F0_mean | −0.1532 | +0.0574 | ✅ Đổi dấu |
+| jitter_local | −0.2258 | +0.1117 | ✅ Đổi dấu |
+| shimmer_local | −0.2938 | +0.2046 | ✅ Đổi dấu |
+| hnr_mean | +0.1372 | −0.1276 | ✅ Đổi dấu |
+
+**TẤT CẢ 4 features đổi dấu** sau khi control age + gender. Đây là **confounder reversal** — hiện tượng hiếm gặp và rất mạnh về mặt phương pháp luận.
+
+**Diễn giải sinh lý học:**
+
+- **Raw test:** bệnh nhân (COVID case) có jitter/shimmer **THẤP hơn** người khỏe → nhìn có vẻ "giọng tốt hơn"; HNR **CAO hơn** → nhìn có vẻ "giọng sạch hơn"
+- **Vô lý sinh lý học:** bệnh hô hấp phải làm giọng xấu đi
+- **Sau control age + gender:** bệnh nhân có jitter/shimmer **CAO hơn** → đúng sinh lý (giọng bất ổn); HNR **THẤP hơn** → đúng sinh lý (nhiễu cao hơn)
+
+**Nguyên nhân confound:**
+- Coswara: male = 1810, female = 806 → lệch giới tính
+- Jitter/shimmer tăng theo tuổi (lão hoá giọng)
+- Nhóm healthy già hơn nhóm case (COVID ảnh hưởng nhiều người trẻ)
+- → Raw: case (trẻ) có jitter/shimmer thấp hơn healthy (già) → hiệu ứng ngược
+- → Control: hiệu ứng thật lộ ra
+
+**Ý nghĩa cho CARVE:** Đây là luận điểm cốt lõi — handcrafted features trông "có ý nghĩa thống kê" nhưng **hướng hiệu ứng sai** nếu không kiểm soát confounder. Kết quả này là bằng chứng định lượng mạnh cho paper.
+
+---
+
+#### VIF — không cần dominance analysis
+
+| Feature | VIF |
+|---|---|
+| F0_mean | 1.106 |
+| jitter_local | 2.168 |
+| shimmer_local | 3.109 |
+| hnr_mean | 2.691 |
+| **max** | **3.109** |
+
+**max VIF = 3.109 < 5** → theo rule chốt trước (Mục III.9), **KHÔNG cần dominance analysis**. Đọc trực tiếp hệ số hồi quy. Đây là tin tốt — đơn giản hóa phần trình bày kết quả.
+
+---
+
+#### A vs B — ổn định hoàn toàn
+
+| Chỉ số | Branch A (acute+recovered) | Branch B (acute-only) |
+|---|---|---|
+| N | 2163 | 2024 |
+| F0 raw r_rb | −0.1532 | −0.1427 |
+| jitter raw r_rb | −0.2258 | −0.2311 |
+| shimmer raw r_rb | −0.2938 | −0.3076 |
+| hnr raw r_rb | +0.1372 | +0.1379 |
+| Tất cả flip sign? | ✅ | ✅ |
+
+**Kết luận:** ổn định qua 2 định nghĩa population → scenario (iii) của CARVE: **không có population-dependence**. Kết luận validity robust với cách định nghĩa nhóm bệnh.
+
+---
+
+#### Issues nhỏ cần xử lý sau
+
+1. **1 sample `age = 1`** — có thể lỗi metadata. Cần check speaker_id cụ thể và loại nếu cần.
+2. **1 sample `gender = 'other'`** — encode thành NaN khi chạy partial correlation → bị loại khỏi lớp 2 (N giảm 2163 → 2162). Không ảnh hưởng lớn, chỉ cần note.
+3. **N discrepancy** giữa audit (2163/2024) và C.5 (2260/2114): do audit chỉ dùng `extraction_status == 'ok'`. Cần note rõ đây là complete-case analysis đúng thiết kế.
+
+---
+
+#### File output
+
+- `results/audit_rq1_branch_A.csv`
+- `results/audit_rq1_branch_B.csv`
+- `results/audit_rq1_summary.json`
 ---
 
 ## D. Power analysis TOST (Bước 0.5)

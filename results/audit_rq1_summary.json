@@ -1,0 +1,164 @@
+{
+  "timestamp": "2026-09-12T13:00:09.172181",
+  "branch_defs": {
+    "A": {
+      "positive": [
+        "positive_mild",
+        "positive_asymp",
+        "positive_moderate",
+        "recovered_full"
+      ],
+      "negative": [
+        "healthy"
+      ],
+      "desc": "Coswara full (acute + recovered vs healthy, exclude exposed)"
+    },
+    "B": {
+      "positive": [
+        "positive_mild",
+        "positive_asymp",
+        "positive_moderate"
+      ],
+      "negative": [
+        "healthy"
+      ],
+      "desc": "Coswara acute-only (acute vs healthy)"
+    }
+  },
+  "features": [
+    "F0_mean",
+    "jitter_local",
+    "shimmer_local",
+    "hnr_mean"
+  ],
+  "results": [
+    {
+      "branch": "A",
+      "feature": "F0_mean",
+      "n_pos": 796,
+      "n_neg": 1367,
+      "raw_r_rb": -0.15315605092029272,
+      "raw_p": 2.706815785087444e-09,
+      "raw_p_holm": 5.413631570174888e-09,
+      "raw_sig_holm": true,
+      "cov_r_partial": 0.05735882351927858,
+      "cov_p": 0.0076375808999175005,
+      "cov_p_holm": 0.0076375808999175005,
+      "cov_sig_holm": true,
+      "vif": 1.106152414027005,
+      "dominance": NaN
+    },
+    {
+      "branch": "A",
+      "feature": "jitter_local",
+      "n_pos": 796,
+      "n_neg": 1367,
+      "raw_r_rb": -0.2257501847202361,
+      "raw_p": 1.819136290592989e-18,
+      "raw_p_holm": 5.457408871778967e-18,
+      "raw_sig_holm": true,
+      "cov_r_partial": 0.11174531318636845,
+      "cov_p": 1.896833744534837e-07,
+      "cov_p_holm": 3.793667489069674e-07,
+      "cov_sig_holm": true,
+      "vif": 2.1684186768944267,
+      "dominance": NaN
+    },
+    {
+      "branch": "A",
+      "feature": "shimmer_local",
+      "n_pos": 796,
+      "n_neg": 1367,
+      "raw_r_rb": -0.2938375123606327,
+      "raw_p": 3.624001835365515e-30,
+      "raw_p_holm": 1.449600734146206e-29,
+      "raw_sig_holm": true,
+      "cov_r_partial": 0.20463852212516903,
+      "cov_p": 7.148236109382336e-22,
+      "cov_p_holm": 2.8592944437529345e-21,
+      "cov_sig_holm": true,
+      "vif": 3.1088941963497665,
+      "dominance": NaN
+    },
+    {
+      "branch": "A",
+      "feature": "hnr_mean",
+      "n_pos": 796,
+      "n_neg": 1367,
+      "raw_r_rb": 0.13724805446398047,
+      "raw_p": 9.78889175518196e-08,
+      "raw_p_holm": 9.78889175518196e-08,
+      "raw_sig_holm": true,
+      "cov_r_partial": -0.12759315664630597,
+      "cov_p": 2.62217414230708e-09,
+      "cov_p_holm": 7.86652242692124e-09,
+      "cov_sig_holm": true,
+      "vif": 2.690523032167329,
+      "dominance": NaN
+    },
+    {
+      "branch": "B",
+      "feature": "F0_mean",
+      "n_pos": 657,
+      "n_neg": 1367,
+      "raw_r_rb": -0.1426904452528006,
+      "raw_p": 1.9417414527833264e-07,
+      "raw_p_holm": 3.883482905566653e-07,
+      "raw_sig_holm": true,
+      "cov_r_partial": 0.051033351436909416,
+      "cov_p": 0.021707719323497576,
+      "cov_p_holm": 0.021707719323497576,
+      "cov_sig_holm": true,
+      "vif": 1.1017852578765284,
+      "dominance": NaN
+    },
+    {
+      "branch": "B",
+      "feature": "jitter_local",
+      "n_pos": 657,
+      "n_neg": 1367,
+      "raw_r_rb": -0.23105735431496277,
+      "raw_p": 3.5114346360529026e-17,
+      "raw_p_holm": 1.0534303908158708e-16,
+      "raw_sig_holm": true,
+      "cov_r_partial": 0.11397647102888998,
+      "cov_p": 2.7474340929619796e-07,
+      "cov_p_holm": 5.494868185923959e-07,
+      "cov_sig_holm": true,
+      "vif": 2.1594735020297255,
+      "dominance": NaN
+    },
+    {
+      "branch": "B",
+      "feature": "shimmer_local",
+      "n_pos": 657,
+      "n_neg": 1367,
+      "raw_r_rb": -0.307583961590836,
+      "raw_p": 3.267644612271156e-29,
+      "raw_p_holm": 1.3070578449084623e-28,
+      "raw_sig_holm": true,
+      "cov_r_partial": 0.2051805542419373,
+      "cov_p": 1.1394053340699882e-20,
+      "cov_p_holm": 4.557621336279953e-20,
+      "cov_sig_holm": true,
+      "vif": 3.084824529611026,
+      "dominance": NaN
+    },
+    {
+      "branch": "B",
+      "feature": "hnr_mean",
+      "n_pos": 657,
+      "n_neg": 1367,
+      "raw_r_rb": 0.13793383727546127,
+      "raw_p": 4.871017101787139e-07,
+      "raw_p_holm": 4.871017101787139e-07,
+      "raw_sig_holm": true,
+      "cov_r_partial": -0.11639355874186838,
+      "cov_p": 1.5231488702047026e-07,
+      "cov_p_holm": 4.5694466106141077e-07,
+      "cov_sig_holm": true,
+      "vif": 2.664721914423201,
+      "dominance": NaN
+    }
+  ]
+}
