@@ -29,12 +29,20 @@ CROP_FROM_START = True  # Cat tu dau
 
 
 def load_audio(wav_path, target_sr=SAMPLE_RATE):
-    """Load wav, resample ve target_sr, tra ve mono tensor [n_samples]."""
-    waveform, sr = torchaudio.load(str(wav_path))
-    # Mono
+    """Load wav, resample ve target_sr, tra ve mono tensor [n_samples].
+
+    Raises RuntimeError neu file corrupt/silent (0 samples).
+    """
+    try:
+        waveform, sr = torchaudio.load(str(wav_path))
+    except Exception as e:
+        raise RuntimeError(f"torchaudio.load failed: {e}") from e
+
+    if waveform.numel() == 0:
+        raise RuntimeError(f"Audio file 0 samples: {wav_path}")
+
     if waveform.size(0) > 1:
         waveform = waveform.mean(dim=0, keepdim=True)
-    # Resample neu can
     if sr != target_sr:
         resampler = torchaudio.transforms.Resample(sr, target_sr)
         waveform = resampler(waveform)
@@ -61,19 +69,17 @@ class MelTransform:
 
     def __call__(self, waveform):
         """waveform: [n_samples] -> mel [1, n_mels, T]."""
-        mel = self.mel(waveform)  # [n_mels, T']
+        mel = self.mel(waveform)
         mel = torch.log(mel + 1e-8)
 
         T_cur = mel.size(1)
         if T_cur >= self.T:
-            # Cat tu dau
             mel = mel[:, :self.T]
         else:
-            # Pad zero cuoi
             pad = torch.zeros(mel.size(0), self.T - T_cur)
             mel = torch.cat([mel, pad], dim=1)
 
-        return mel.unsqueeze(0)  # [1, n_mels, T]
+        return mel.unsqueeze(0)
 
 
 class SpecAugment(nn.Module):
@@ -104,7 +110,6 @@ class VowelEDataset(Dataset):
 
     Args:
         df: pandas DataFrame voi cot ['wav_path', 'label']
-            (co the co them 'speaker_id' cho debug)
         mel_transform: MelTransform instance
         spec_augment: SpecAugment hoac None (None cho val/test)
         mel_mean, mel_std: scalar hoac None (None = khong normalize)
@@ -127,13 +132,11 @@ class VowelEDataset(Dataset):
         label = float(row['label'])
 
         waveform = load_audio(wav_path)
-        mel = self.mel_transform(waveform)  # [1, 128, T]
+        mel = self.mel_transform(waveform)
 
-        # Normalize
         if self.mel_mean is not None and self.mel_std is not None:
             mel = (mel - self.mel_mean) / (self.mel_std + 1e-8)
 
-        # SpecAugment chi khi training
         if self.spec_augment is not None:
             mel = self.spec_augment(mel)
 
@@ -141,16 +144,7 @@ class VowelEDataset(Dataset):
 
 
 def compute_mel_stats(df, mel_transform=None, max_samples=None):
-    """Tinh mean/std cua log-mel tren train fold.
-
-    Args:
-        df: DataFrame voi cot ['wav_path']
-        mel_transform: MelTransform instance
-        max_samples: gioi han so file de tinh (None = all)
-
-    Returns:
-        (mel_mean, mel_std): scalar float
-    """
+    """Tinh mean/std cua log-mel tren train fold."""
     mel_transform = mel_transform or MelTransform()
     df_ = df if max_samples is None else df.head(max_samples)
 
@@ -158,7 +152,7 @@ def compute_mel_stats(df, mel_transform=None, max_samples=None):
     for _, row in df_.iterrows():
         try:
             waveform = load_audio(row['wav_path'])
-            mel = mel_transform(waveform)  # [1, 128, T]
+            mel = mel_transform(waveform)
             all_vals.append(mel.flatten())
         except Exception:
             continue
@@ -171,24 +165,21 @@ def compute_mel_stats(df, mel_transform=None, max_samples=None):
 
 
 if __name__ == '__main__':
-    # Quick test voi dummy waveform (khong can file wav that)
     print("=== Test MelTransform ===")
     mt = MelTransform()
-    wav = torch.randn(SAMPLE_RATE * 3)  # 3s
+    wav = torch.randn(SAMPLE_RATE * 3)
     mel = mt(wav)
     print(f"Input: 3s audio ({wav.shape})")
     print(f"Mel shape: {tuple(mel.shape)}")
-    assert mel.shape == (1, N_MELS, T_FRAMES), f"Shape mismatch: {mel.shape}"
+    assert mel.shape == (1, N_MELS, T_FRAMES)
 
-    # Test audio dai hon 5s
-    wav_long = torch.randn(SAMPLE_RATE * 10)  # 10s
+    wav_long = torch.randn(SAMPLE_RATE * 10)
     mel_long = mt(wav_long)
     print(f"\nInput: 10s audio ({wav_long.shape})")
     print(f"Mel shape: {tuple(mel_long.shape)} (crop tu dau)")
     assert mel_long.shape == (1, N_MELS, T_FRAMES)
 
-    # Test audio ngan hon 5s
-    wav_short = torch.randn(SAMPLE_RATE * 2)  # 2s
+    wav_short = torch.randn(SAMPLE_RATE * 2)
     mel_short = mt(wav_short)
     print(f"\nInput: 2s audio ({wav_short.shape})")
     print(f"Mel shape: {tuple(mel_short.shape)} (pad zero)")
@@ -199,6 +190,6 @@ if __name__ == '__main__':
     print(f"Before: mean={mel.mean():.4f}, std={mel.std():.4f}")
     print(f"After:  mean={mel_aug.mean():.4f}, std={mel_aug.std():.4f}")
     print(f"Change: {(mel_aug != mel).sum().item()} values masked")
-    assert (mel_aug != mel).any(), "SpecAugment khong thay doi gi"
+    assert (mel_aug != mel).any()
 
     print("\nOK")

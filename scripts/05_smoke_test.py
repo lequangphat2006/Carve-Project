@@ -30,11 +30,28 @@ from src.models import DeepFeat, count_parameters, gradcam_from_features
 from src.train import TrainConfig, fit, predict_proba, set_seed
 
 
-def find_wavs(audio_dir):
+def find_wavs(audio_dir, pre_filter=True):
+    """Tim file vowel-e. Neu pre_filter=True, chi giu file load duoc."""
     audio_dir = Path(audio_dir)
     wavs = sorted(audio_dir.rglob("*vowel-e*.wav"))
-    # Loai macOS metadata
     wavs = [w for w in wavs if not w.name.startswith("._")]
+
+    if pre_filter:
+        import soundfile as sf
+        valid = []
+        skipped = 0
+        for w in wavs:
+            try:
+                info = sf.info(str(w))
+                if info.frames > 0:
+                    valid.append(w)
+                else:
+                    skipped += 1
+            except Exception:
+                skipped += 1
+        print(f"  Pre-filter: {len(valid)} valid, {skipped} skipped (corrupt/silent)")
+        wavs = valid
+
     return wavs
 
 
@@ -44,7 +61,6 @@ def build_df(wavs, seed=0):
     speaker_ids = [w.parent.name for w in wavs]
     unique_speakers = sorted(set(speaker_ids))
 
-    # Gan label co dinh cho moi speaker (fake)
     speaker_label = {sid: int(rng.randint(0, 2)) for sid in unique_speakers}
 
     df = pd.DataFrame({
@@ -83,11 +99,9 @@ def main():
     print("CARVE — L0 Smoke Test (DeepFeat)")
     print("=" * 72)
 
-    # 1. Seed
     set_seed(args.seed, deterministic=True)
     print(f"\nSeed: {args.seed}, deterministic=True")
 
-    # 2. Tim audio
     print(f"\nTim vowel-e wav trong: {args.audio_dir}")
     wavs = find_wavs(args.audio_dir)
     print(f"  Found: {len(wavs)} files")
@@ -99,7 +113,6 @@ def main():
         wavs = wavs[:args.max_files]
         print(f"  Gioi han: {len(wavs)} files")
 
-    # 3. Build df + split
     df = build_df(wavs, seed=args.seed)
     print(f"\nSpeakers: {df['speaker_id'].nunique()}")
     print(f"Labels (fake): {df['label'].value_counts().to_dict()}")
@@ -108,18 +121,15 @@ def main():
     print(f"\nTrain: {len(train_df)} samples ({train_df['speaker_id'].nunique()} spk)")
     print(f"Val:   {len(val_df)} samples ({val_df['speaker_id'].nunique()} spk)")
 
-    # Check ca 2 split co ca 2 label
     for name, d in [('train', train_df), ('val', val_df)]:
         counts = d['label'].value_counts().to_dict()
         if len(counts) < 2:
             print(f"CANH BAO: {name} chi co 1 label: {counts} — ROC-AUC se NaN")
 
-    # 4. Build dataset
     print("\nBuild dataset...")
     mel_tf = MelTransform()
-    spec_aug = SpecAugment()  # standard preset
+    spec_aug = SpecAugment()
 
-    # Compute mel stats tren train (max 20 file de nhanh)
     print("  Tinh mel mean/std tren train (20 file)...")
     mel_mean, mel_std = compute_mel_stats(train_df, mel_tf, max_samples=20)
     print(f"  mel_mean={mel_mean:.4f}, mel_std={mel_std:.4f}")
@@ -134,19 +144,16 @@ def main():
     val_loader = DataLoader(val_ds, batch_size=args.batch_size,
                             shuffle=False, num_workers=2)
 
-    # 5. Verify 1 batch
     print("\nVerify 1 batch:")
     xb, yb = next(iter(train_loader))
     print(f"  Batch shape: x={tuple(xb.shape)}, y={tuple(yb.shape)}")
     assert xb.shape[1:] == (1, 128, 500), f"Shape sai: {xb.shape}"
     assert not torch.isnan(xb).any(), "Mel co NaN"
 
-    # 6. Model
     print("\nBuild model:")
     model = DeepFeat()
     print(f"  DeepFeat params: {count_parameters(model):,}")
 
-    # 7. Train
     print(f"\nTrain {args.epochs} epochs...")
     config = TrainConfig(
         epochs=args.epochs,
@@ -163,13 +170,11 @@ def main():
     print(f"Stopped epoch: {result['stopped_epoch']}")
     print(f"History length: {len(result['history'])}")
 
-    # 8. Predict + Grad-CAM sanity
     print("\nPredict on val:")
     probs, labels = predict_proba(result['model'], val_loader, device='auto')
     print(f"  probs shape: {probs.shape}")
     print(f"  probs range: [{probs.min():.4f}, {probs.max():.4f}]")
 
-    # Grad-CAM sanity: 1 sample tu val
     print("\nGrad-CAM sanity check:")
     model = result['model']
     model.eval()
