@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Data (không commit dữ liệu)
+data/raw/
+data/processed/
+*.wav
+*.csv
+
+# Results (không commit output)
+results/logs/
+results/checkpoints/
+results/hpo/
+results/pilot/
+results/full/
+results/xai/
+!results/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
