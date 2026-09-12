@@ -195,10 +195,28 @@ def main():
             n_fail += 1
 
         # In dung luong moi 5 ngay
-        if i % 5 == 0:
-            r = subprocess.run(["df", "-h", "/kaggle/working"],
-                               capture_output=True, text=True)
-            print(f"\n  Dung luong hien tai:\n{r.stdout}")
+        # Re-clone repo moi 10 ngay (cleanup .git objects tich tu)
+        if i % 10 == 0 and i < len(todo):
+            print(f"\n  === Re-clone repo sau {i} ngay (cleanup .git) ===")
+            subprocess.run(["rm", "-rf", args.repo_dir], check=False)
+            setup_sparse_repo(args.repo_dir)
+
+        # In dung luong moi ngay
+        r = subprocess.run(["df", "-h", "/kaggle/working"],
+                           capture_output=True, text=True)
+        print(f"  Dung luong: {r.stdout.strip().splitlines()[-1]}")
+
+        # Auto-stop neu Avail < 3 GB
+        try:
+            line = r.stdout.strip().splitlines()[-1]
+            avail_gb = float(line.split()[3].replace('G', ''))
+            if avail_gb < 3.0:
+                print(f"\n  !!! DUNG LUONG < 3 GB ({avail_gb:.1f} GB) — DUNG BATCH !!!")
+                print(f"  mel_cache da co: {len(list(output_dir.glob('mel_*.npz')))} files")
+                print(f"  Resume bang cach chay lai script.")
+                sys.exit(0)
+        except (ValueError, IndexError):
+            pass
 
     print(f"\n{'=' * 72}")
     print(f"XONG: {n_ok} OK, {n_fail} fail")
