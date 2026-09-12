@@ -138,7 +138,7 @@ def train_one_run(X, y, meta, args, seed):
     val_loader = DataLoader(val_ds, batch_size=args.batch_size,
                             shuffle=False, num_workers=2)
 
-    model = DeepFeat()
+    model = DeepFeat(dropout=args.dropout)
     config = TrainConfig(
         epochs=args.epochs,
         batch_size=args.batch_size,
@@ -184,6 +184,7 @@ def main():
     parser.add_argument('--lr', type=float, default=3e-4)
     parser.add_argument('--weight-decay', type=float, default=1e-4)
     parser.add_argument('--patience', type=int, default=10)
+    parser.add_argument('--dropout', type=float, default=0.5)
     args = parser.parse_args()
 
     print("=" * 72)
