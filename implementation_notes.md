@@ -425,6 +425,22 @@ Script: `scripts/04_viz_rq1.py`, output 300 DPI, sẵn sàng cho paper.
 
 **Kết luận:** L1 PASS → chuyển L1.5 (cross-fold sanity).
 
+### C.11. Stage 2 — L1.5 Cross-fold Sanity PASS (2026-09-12)
+
+**Config:** 5 folds × 1 seed (seed 0) × 20 epoch, config L1
+
+| Fold | Val ROC-AUC |
+|---|---|
+| 0 | 0.7533 |
+| 1 | 0.7306 |
+| 2 | 0.7885 |
+| 3 | 0.7642 |
+| 4 | 0.7779 |
+| **Mean** | **0.7629 ± 0.0201** |
+
+**Go/no-go L1.5:** std < 0.08 ✅ (thực tế 0.0201)
+→ Không có fold bất thường. Chuyển sang L2 HPO.
+
 -----------------------------------------------------------------------------
 
 ## D. Power analysis TOST (Bước 0.5)
