@@ -398,6 +398,33 @@ Script: `scripts/04_viz_rq1.py`, output 300 DPI, sẵn sàng cho paper.
 2. `torchaudio.load` crash với file 0 samples → defensive load
 3. Pre-filter với `soundfile.info` loại file corrupt trước khi vào DataLoader
 
+
+### C.10. Stage 2 — L1 Pilot DeepFeat PASS (2026-09-12)
+
+**Dataset:** Coswara A+B mel cache (N=2085, 677 pos / 1408 neg)
+**Split:** speaker-aware 5-fold, fold 0, 3 seeds (SEED_UNIVERSE 0-2)
+**Config:** 20 epochs, batch=32, lr=3e-4, weight_decay=1e-4, patience=10
+
+**Kết quả:**
+
+| Seed | Best epoch | Val ROC-AUC |
+|---|---|---|
+| 0 | 18 | 0.7533 |
+| 1 | 13 | 0.7692 |
+| 2 | 14 | 0.7517 |
+| **Mean** | — | **0.7581 ± 0.0079** |
+
+**So sánh với HandFeat (từ C.6):**
+- HandFeat raw r_rb: 0.15-0.31 (yếu)
+- DeepFeat: 0.758 → mạnh hơn hẳn
+
+**Go/no-go:**
+- Ngưỡng L1: ROC-AUC > 0.55 ✅ (vượt 0.2+)
+- Std qua seed < 0.05 ✅ (thực tế 0.008)
+- Time/epoch ổn định ✅ (~5.8s, không tăng)
+
+**Kết luận:** L1 PASS → chuyển L1.5 (cross-fold sanity).
+
 -----------------------------------------------------------------------------
 
 ## D. Power analysis TOST (Bước 0.5)
