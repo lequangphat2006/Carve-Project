@@ -124,9 +124,9 @@ def main():
     mel_mean, mel_std = compute_mel_stats(train_df, mel_tf, max_samples=20)
     print(f"  mel_mean={mel_mean:.4f}, mel_std={mel_std:.4f}")
 
-    train_ds = VowelEDataset(train_df, mel_tf, spec_aug,
+    train_ds = VowelEDataset(train_df, mel_tf, spec_augment=spec_aug,
                              mel_mean=mel_mean, mel_std=mel_std)
-    val_ds = VowelEDataset(val_df, mel_tf, spec_aug=None,
+    val_ds = VowelEDataset(val_df, mel_tf, spec_augment=None,
                            mel_mean=mel_mean, mel_std=mel_std)
 
     train_loader = DataLoader(train_ds, batch_size=args.batch_size,
