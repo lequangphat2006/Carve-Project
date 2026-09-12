@@ -486,6 +486,30 @@ Script: `scripts/04_viz_rq1.py`, output 300 DPI, sẵn sàng cho paper.
 
 **Quyết định:** Dùng best config trial 18 cho L3 full run.
 
+### C.13. Stage 2 — L3 Fold 0 (2026-09-12)
+
+**Config:** best HPO (lr=4.544e-4, wd=1.176e-5, bs=16, dropout=0.356)
+**Setup:** fold 0, 10 seeds (SEED_UNIVERSE 0-9), 100 epoch, patience=10
+
+| Seed | Best epoch | Val ROC-AUC |
+|---|---|---|
+| 0 | 26 | 0.7588 |
+| 1 | 11 | 0.7693 |
+| 2 | 7 | 0.7464 |
+| 3 | 17 | 0.7468 |
+| 4 | 25 | 0.7822 |
+| 5 | 26 | 0.7886 |
+| 6 | 26 | 0.7503 |
+| 7 | 28 | 0.7934 |
+| 8 | 52 | 0.7889 |
+| 9 | 19 | 0.8077 |
+| **Mean** | — | **0.7732 ± 0.0208** |
+
+**Đọc kết quả:**
+- L3 fold 0 (0.7732) < HPO best (0.794) do HPO bị selection bias
+  (best of 20 trials cùng fold). 0.7732 là honest estimate.
+- Std 0.0208 — ổn định qua seeds
+- Early stop tập trung 7-62 epoch → model không cần full 100 epoch
 -----------------------------------------------------------------------------
 
 ## D. Power analysis TOST (Bước 0.5)
