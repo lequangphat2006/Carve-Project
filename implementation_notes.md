@@ -441,6 +441,51 @@ Script: `scripts/04_viz_rq1.py`, output 300 DPI, sẵn sàng cho paper.
 **Go/no-go L1.5:** std < 0.08 ✅ (thực tế 0.0201)
 → Không có fold bất thường. Chuyển sang L2 HPO (20 trial random search).
 
+### C.12. Stage 2 — L2 HPO PASS (2026-09-12)
+
+**Config:** random search 20 trial, fold 0, seed 0, 100 epoch, early stop patience=10
+
+**Search space:**
+- lr ~ log_uniform(1e-5, 1e-3)
+- weight_decay ~ log_uniform(1e-6, 1e-3)
+- batch_size ∈ {16, 32, 64}
+- dropout ~ uniform(0.3, 0.7)
+
+**Top 5:**
+
+| Trial | Val AUC | lr | weight_decay | batch_size | dropout |
+|---|---|---|---|---|---|
+| 18 | **0.7940** | 4.54e-4 | 1.18e-5 | 16 | 0.36 |
+| 5 | 0.7793 | 9.65e-4 | 7.12e-5 | 32 | 0.51 |
+| 4 | 0.7752 | 8.71e-4 | 3.14e-4 | 32 | 0.30 |
+| 16 | 0.7660 | 2.85e-4 | 9.54e-6 | 32 | 0.38 |
+| 3 | 0.7585 | 5.40e-4 | 6.36e-5 | 64 | 0.31 |
+
+**Best config (trial 18):**
+- lr = 4.544e-4
+- weight_decay = 1.176e-5
+- batch_size = 16
+- dropout = 0.356
+- Val AUC = 0.7940
+
+**So sánh với L1 default:**
+
+| | Config | Val AUC |
+|---|---|---|
+| L1 default | lr=3e-4, wd=1e-4, bs=32, do=0.5 | 0.7533 |
+| L2 best | lr=4.54e-4, wd=1.18e-5, bs=16, do=0.36 | 0.7940 |
+| Delta | — | **+0.041 (+5.4%)** |
+
+**Pattern:**
+- LR cao (>2.8e-4) tốt hơn; LR thấp (~1.2e-5) underfit (<0.71)
+- weight_decay nhỏ (1e-6 – 3e-4) tốt hơn
+- dropout < 0.5 ưu thế
+- batch_size 16–32 > 64
+
+**Thời gian:** 114.9 min (1.9h).
+
+**Quyết định:** Dùng best config trial 18 cho L3 full run.
+
 -----------------------------------------------------------------------------
 
 ## D. Power analysis TOST (Bước 0.5)
