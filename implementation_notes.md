@@ -195,3 +195,23 @@ Diễn giải: [theo ngưỡng Mục III.2] — pending (block bởi DiCOVA)
   3. Praat command đúng là `"To PointProcess (periodic, cc)"`, không phải `"To PointProcess (cc)"`
 - **numpy conflict trên Kaggle:** `pip install numpy==1.26.4` gây binary incompatibility với pandas mặc định (numpy 2.x) → quyết định dùng numpy mặc định Kaggle (2.x) thay vì pin 1.26.4, vì 4 đặc trưng HandFeat không phụ thuộc version numpy
 - **Chi tiết:** xem commit `Fix unit tests: sklearn API, retain_grad, Praat PointProcess command`
+
+### E.4. Coswara Audio Quality (phát hiện Stage 1)
+
+**Ngày:** 2026-09-12 (test ngày 20200413)
+
+- Tổng file vowel-e: 76
+- OK: 67 (88.2%)
+- Partial (silent, RMS=0): 7 (9.2%)
+- Failed (0 samples): 2 (2.6%)
+
+**Nguyên nhân:** File silent (RMS=0) do mic fail khi ghi âm;
+file 0 samples do corrupt upload. Không recover được bằng
+bất kỳ tham số Praat nào (đã test relaxed pitch range 50-600 Hz
+và voicing threshold 0.30 — đều cho voiced=0).
+
+**Xử lý:**
+- Loại 9 file hỏng khỏi mọi phân tích
+- QC report ghi rõ 2 tỉ lệ: 88.2% (tổng) và 100% (file hợp lệ)
+- Sensitivity check: nếu tỉ lệ OK toàn Coswara < 85%, cân nhắc
+  báo cáo như một limitation độc lập
