@@ -510,6 +510,29 @@ Script: `scripts/04_viz_rq1.py`, output 300 DPI, sẵn sàng cho paper.
   (best of 20 trials cùng fold). 0.7732 là honest estimate.
 - Std 0.0208 — ổn định qua seeds
 - Early stop tập trung 7-62 epoch → model không cần full 100 epoch
+
+### C.14. Stage 2 — L3 DeepFeat Full (2026-09-13)
+
+**Config:** HPO best (lr=4.544e-4, wd=1.176e-5, bs=16, dropout=0.356)
+**Setup:** 5 folds × 10 seeds × 100 epoch, patience=10, speaker-aware
+
+| Fold | Mean AUC (10 seeds) | Std |
+|---|---|---|
+| 0 | 0.7732 | 0.0208 |
+| 1 | 0.7821 | 0.0258 |
+| 2 | 0.7953 | 0.0218 |
+| 3 | 0.7882 | 0.0354 |
+| 4 | 0.7876 | 0.0219 |
+| **5-fold avg** | **0.7853** | **0.0074** |
+
+**Kết luận:**
+- 5-fold average: 0.7853 ± 0.0074 (std rất nhỏ, training stable)
+- Min fold: 0.7732 (fold 0), Max fold: 0.7953 (fold 2)
+- Std across seeds 0.02-0.035 — ổn định
+- So sánh HandFeat (raw r_rb 0.15-0.31): DeepFeat vượt trội rõ rệt
+- Kết quả sẵn sàng cho RQ2 (so sánh 3 hệ thống)
+
+**Go/no-go L3:** hoàn thành đủ 5 fold × 10 seed ✅
 -----------------------------------------------------------------------------
 
 ## D. Power analysis TOST (Bước 0.5)
