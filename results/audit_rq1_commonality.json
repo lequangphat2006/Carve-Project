@@ -1,0 +1,191 @@
+{
+  "timestamp": "2026-09-12T13:09:16.226879",
+  "features": [
+    "F0_mean",
+    "jitter_local",
+    "shimmer_local",
+    "hnr_mean"
+  ],
+  "results": [
+    {
+      "branch": "A",
+      "size": 1,
+      "subset": "F0",
+      "C_S": 0.013293637278594228
+    },
+    {
+      "branch": "A",
+      "size": 1,
+      "subset": "jit",
+      "C_S": 0.01399428305235284
+    },
+    {
+      "branch": "A",
+      "size": 1,
+      "subset": "shim",
+      "C_S": 0.04093681277809036
+    },
+    {
+      "branch": "A",
+      "size": 1,
+      "subset": "hnr",
+      "C_S": 0.01404516471337336
+    },
+    {
+      "branch": "A",
+      "size": 2,
+      "subset": "F0+jit",
+      "C_S": -0.003756642172939584
+    },
+    {
+      "branch": "A",
+      "size": 2,
+      "subset": "F0+shim",
+      "C_S": -0.0006773334247462959
+    },
+    {
+      "branch": "A",
+      "size": 2,
+      "subset": "F0+hnr",
+      "C_S": 0.0034219764339239456
+    },
+    {
+      "branch": "A",
+      "size": 2,
+      "subset": "jit+shim",
+      "C_S": -0.012807219392458546
+    },
+    {
+      "branch": "A",
+      "size": 2,
+      "subset": "jit+hnr",
+      "C_S": -0.010712931867382536
+    },
+    {
+      "branch": "A",
+      "size": 2,
+      "subset": "shim+hnr",
+      "C_S": -0.010569355833649263
+    },
+    {
+      "branch": "A",
+      "size": 3,
+      "subset": "F0+jit+shim",
+      "C_S": 0.006103744175078085
+    },
+    {
+      "branch": "A",
+      "size": 3,
+      "subset": "F0+jit+hnr",
+      "C_S": 0.0008892641059549122
+    },
+    {
+      "branch": "A",
+      "size": 3,
+      "subset": "F0+shim+hnr",
+      "C_S": -0.0054521567395071635
+    },
+    {
+      "branch": "A",
+      "size": 3,
+      "subset": "jit+shim+hnr",
+      "C_S": 0.010155341346698266
+    },
+    {
+      "branch": "A",
+      "size": 4,
+      "subset": "F0+jit+shim+hnr",
+      "C_S": -0.0011064315249927903
+    },
+    {
+      "branch": "B",
+      "size": 1,
+      "subset": "F0",
+      "C_S": 0.009557117678698601
+    },
+    {
+      "branch": "B",
+      "size": 1,
+      "subset": "jit",
+      "C_S": 0.01396877890704007
+    },
+    {
+      "branch": "B",
+      "size": 1,
+      "subset": "shim",
+      "C_S": 0.04115780000497948
+    },
+    {
+      "branch": "B",
+      "size": 1,
+      "subset": "hnr",
+      "C_S": 0.012057179884781721
+    },
+    {
+      "branch": "B",
+      "size": 2,
+      "subset": "F0+jit",
+      "C_S": -0.0030334732101906514
+    },
+    {
+      "branch": "B",
+      "size": 2,
+      "subset": "F0+shim",
+      "C_S": -0.0007086391202477671
+    },
+    {
+      "branch": "B",
+      "size": 2,
+      "subset": "F0+hnr",
+      "C_S": 0.0027536026909159572
+    },
+    {
+      "branch": "B",
+      "size": 2,
+      "subset": "jit+shim",
+      "C_S": -0.01271557382677213
+    },
+    {
+      "branch": "B",
+      "size": 2,
+      "subset": "jit+hnr",
+      "C_S": -0.009866945807863403
+    },
+    {
+      "branch": "B",
+      "size": 2,
+      "subset": "shim+hnr",
+      "C_S": -0.0069015641301123365
+    },
+    {
+      "branch": "B",
+      "size": 3,
+      "subset": "F0+jit+shim",
+      "C_S": 0.004794508742448134
+    },
+    {
+      "branch": "B",
+      "size": 3,
+      "subset": "F0+jit+hnr",
+      "C_S": 8.363771773356454e-05
+    },
+    {
+      "branch": "B",
+      "size": 3,
+      "subset": "F0+shim+hnr",
+      "C_S": -0.004978194493630905
+    },
+    {
+      "branch": "B",
+      "size": 3,
+      "subset": "jit+shim+hnr",
+      "C_S": 0.009180130840331757
+    },
+    {
+      "branch": "B",
+      "size": 4,
+      "subset": "F0+jit+shim+hnr",
+      "C_S": -0.0004430908749361029
+    }
+  ]
+}

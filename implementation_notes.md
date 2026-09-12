@@ -276,6 +276,89 @@ Không có population-dependence rõ rệt.
 - `results/audit_rq1_summary.json`
 - `results/audit_rq1_logreg_verify.csv`
 
+### C.7. Stage 5a — Commonality analysis (2026-09-12)
+
+**Mục đích:** định lượng suppression đã phát hiện ở C.6 (logreg verification).
+Commonality analysis (Mood 1971, Pedhazur 1982) phân rã R²_full thành unique +
+shared contributions từ mọi subset của 4 features.
+
+**Phương pháp:** OLS regression với recursive commonality coefficients
+C_S = R²(S) − Σ_{T ⊊ S} C_T. Kiểm tra Sum C_S = R²_full (diff = 0 → formula đúng).
+
+#### Kết quả Branch A (N=2160, pos=794, neg=1366)
+
+R²_full = 0.057758
+
+| Subset | \|S\| | C_S |
+|---|---|---|
+| F0 | 1 | +0.013294 |
+| jit | 1 | +0.013994 |
+| shim | 1 | +0.040937 |
+| hnr | 1 | +0.014045 |
+| F0+jit | 2 | −0.003757 |
+| F0+shim | 2 | −0.000677 |
+| F0+hnr | 2 | **+0.003422** |
+| jit+shim | 2 | **−0.012807** |
+| jit+hnr | 2 | −0.010713 |
+| shim+hnr | 2 | −0.010569 |
+| F0+jit+shim | 3 | +0.006104 |
+| F0+jit+hnr | 3 | +0.000889 |
+| F0+shim+hnr | 3 | −0.005452 |
+| jit+shim+hnr | 3 | +0.010155 |
+| F0+jit+shim+hnr | 4 | −0.001106 |
+| **Sum C_S** | | **+0.057758** = R²_full |
+
+#### Kết quả Branch B (N=2021, pos=655, neg=1366)
+
+R²_full = 0.054905
+
+Pattern giống hệt Branch A:
+- Sum unique: +0.0767 (139.8% R²_full)
+- Sum shared: −0.0218 (−39.8% R²_full)
+- 5/6 pairs âm (suppression)
+- Pair mạnh nhất: jit+shim = −0.012716
+
+#### Tổng kết suppression
+
+| Chỉ số | Branch A | Branch B |
+|---|---|---|
+| Sum unique (% R²_full) | 142.4% | 139.8% |
+| Sum shared (% R²_full) | −42.4% | −39.8% |
+| Pairs âm | 5/6 | 5/6 |
+
+**Diễn giải:**
+
+- Nếu 4 features độc lập, kỳ vọng: unique ≈ 100%, shared ≈ 0
+- Thực tế: unique = **142%**, shared = **−42%** (Branch A)
+- → Các features "che khuất" lẫn nhau — tổng phương sai marginal > phương sai joint
+
+**Top 3 pairs suppression mạnh (ổn định ở cả 2 branches):**
+
+| Pair | Branch A | Branch B | Sinh lý học |
+|---|---|---|---|
+| jit+shim | −0.0128 | −0.0127 | Cùng đo cycle-to-cycle perturbation |
+| jit+hnr | −0.0107 | −0.0099 | jitter↑ → HNR↓ |
+| shim+hnr | −0.0106 | −0.0069 | shimmer↑ → HNR↓ |
+
+**Pair duy nhất positive:** F0+hnr (+0.0034, +0.0028) — 2 features hài hòa.
+
+#### Ý nghĩa cho CARVE
+
+Ba tầng bằng chứng suppression:
+
+| Tầng | Phương pháp | Kết quả |
+|---|---|---|
+| 1 | Univariate (r_rb) | Case giọng "tốt hơn" — ngược sinh lý |
+| 2 | Multivariate logreg (C.6) | Suppression: hệ số đảo dấu |
+| 3 | Commonality (C.7) | Shared variance = **−42%** — định lượng |
+
+**Luận điểm:** handcrafted features không độc lập; hướng và độ lớn hiệu ứng
+phụ thuộc mạnh vào việc các feature khác có mặt trong mô hình hay không.
+Đây là lý do CARVE yêu cầu audit đầy đủ trước khi diễn giải bất kỳ hệ số nào.
+
+**Ổn định:** pattern giống hệt Branch A và B → không có population-dependence.
+-----------------------------------------------------------------------------
+
 ## D. Power analysis TOST (Bước 0.5)
 
 | ES | power |
