@@ -475,3 +475,19 @@ Diễn giải: [theo ngưỡng Mục III.2] — pending (block bởi DiCOVA)
 - **Không vi phạm spec:** Conv channels 32→64→128→256 giữ nguyên;
   Grad-CAM target vẫn là conv4 feature map.
 - **Ảnh hưởng:** Regularization (dropout 0.5, weight_decay) giữ nguyên.
+
+### E.5b. Vowel-e Duration Handling (2026-09-12)
+
+- **Spec CARVE:** mel [128, 200] (T=200, ~2s)
+- **Duration đo được (N=74, 20200413):**
+  - median 10.84s, p25 6.42s, p75 15.19s, max 29.10s
+  - Chỉ 5.4% audio ≤ 2s
+- **Quyết định chính:** T=500 (5s), crop từ đầu (0–5s), pad zero nếu ngắn hơn
+- **Lý do:**
+  - Khớp PretrainedAudio input 5s (Mục 4.3) → RQ2 so sánh công bằng
+  - Fit budget Kaggle (DeepFeat ~104h + PretrainedAudio ~125h = 229h < 240h)
+  - Sustained phonation → 5s đầu đủ đại diện
+  - XAI alignment: hop=10ms khớp Praat → Grad-CAM W=500 ↔ F0(t)/jitter(t)/HNR(t)
+- **Sensitivity (Tier 2, nếu có compute):** T=1000, 1 fold × 3 seeds
+  - Rule escalation: chênh ROC-AUC ≥ 0.05 → cân nhắc chuyển T=1000 main
+- **Ảnh hưởng:** mel shape [1, 128, 500] thay vì [1, 128, 200]
