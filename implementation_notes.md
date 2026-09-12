@@ -2,7 +2,7 @@
 
 **Ngày tạo:** 2026-09-12
 **Phiên bản tài liệu tham chiếu:** CARVE v5.1
-**Trạng thái:** Đang chạy Stage 0 — đã xong 0.1 (unit tests), 0.2/0.3 (Coswara only); chờ DiCOVA cho 0.4/0.5
+**Trạng thái:** Stage 0 xong (0.1–0.3); Stage 1 xong nhánh A+B (Coswara full + acute). Chờ DiCOVA cho nhánh C (0.4/0.5 + RQ1 C + RQ2/RQ3)
 **Cập nhật lần cuối:** 2026-09-12
 
 ---
@@ -130,7 +130,24 @@
 - Tỉ lệ positive/fold: [min __%, max __%] — pending
 - N/fold: [~240] — pending
 
-### C.4. Stage 1 — Branch split (2026-09-12)
+### C.4. Stage 1 — Coswara HandFeat extraction (2026-09-12)
+
+- File: `data/processed/handfeat_coswara_full.csv`
+- Rows: 2746 (khớp unique speakers metadata)
+- Ngày: 43 (20200413 → 20220224)
+- OK: 2617 (95.3%)
+- Partial: 91 (3.3%)
+- Failed: 38 (1.4%)
+- Feature distribution (OK only):
+  - F0_mean: 82.4–466.4 Hz (median 150.1)
+  - jitter_local: 0.07%–13.6% (median 0.72%)
+  - shimmer_local: 0.7%–34.5% (median 5.98%)
+  - hnr_mean: -4.58 to 35.13 dB (median 18.98)
+  - pct_voiced: 0.38%–99.1% (median 57.3%)
+- HNR âm (0.31%): 8/2617 file, đều có pct_voiced < 32% (file nhiễu cao) → hợp lý sinh lý học
+- Loại bỏ 1 file `._vowel-e.wav` (macOS metadata)
+
+### C.5. Stage 1 — Branch split (2026-09-12)
 
 - Branch A (full Coswara): `data/processed/handfeat_coswara_full.csv` (2746 rows, đã thêm covid_status + a + g)
 - Branch B (acute-only): `data/processed/handfeat_coswara_branch_B.csv`
@@ -217,22 +234,22 @@ Diễn giải: [theo ngưỡng Mục III.2] — pending (block bởi DiCOVA)
 - **numpy conflict trên Kaggle:** `pip install numpy==1.26.4` gây binary incompatibility với pandas mặc định (numpy 2.x) → quyết định dùng numpy mặc định Kaggle (2.x) thay vì pin 1.26.4, vì 4 đặc trưng HandFeat không phụ thuộc version numpy
 - **Chi tiết:** xem commit `Fix unit tests: sklearn API, retain_grad, Praat PointProcess command`
 
-### E.4. Coswara Audio Quality (phát hiện Stage 1)
+### E.4. Coswara Audio Quality (Stage 1, full extraction)
 
-**Ngày:** 2026-09-12 (test ngày 20200413)
+**Ngày:** 2026-09-12
 
-- Tổng file vowel-e: 76
-- OK: 67 (88.2%)
-- Partial (silent, RMS=0): 7 (9.2%)
-- Failed (0 samples): 2 (2.6%)
+- Tổng file vowel-e: 2746
+- OK: 2617 (95.3%)
+- Partial: 91 (3.3%) — chủ yếu silent (RMS=0) do mic fail
+- Failed: 38 (1.4%) — 37 file 0 samples (corrupt) + 1 file `._vowel-e.wav` (macOS metadata)
 
-**Nguyên nhân:** File silent (RMS=0) do mic fail khi ghi âm;
-file 0 samples do corrupt upload. Không recover được bằng
-bất kỳ tham số Praat nào (đã test relaxed pitch range 50-600 Hz
-và voicing threshold 0.30 — đều cho voiced=0).
+**Nguyên nhân:**
+- Silent (RMS=0): mic fail khi ghi âm
+- 0 samples: file corrupt upload
+- Không recover được bằng Praat params (đã test relaxed pitch 50-600 Hz,
+  voicing threshold 0.30 — tất cả silent files đều cho voiced=0)
 
 **Xử lý:**
-- Loại 9 file hỏng khỏi mọi phân tích
-- QC report ghi rõ 2 tỉ lệ: 88.2% (tổng) và 100% (file hợp lệ)
-- Sensitivity check: nếu tỉ lệ OK toàn Coswara < 85%, cân nhắc
-  báo cáo như một limitation độc lập
+- Loại 38 file failed khỏi phân tích
+- QC report ghi rõ 2 tỉ lệ: 95.3% (tổng) và 98.6% (file hợp lệ)
+- Tỉ lệ < 2% và không có pattern rõ ràng → không cần báo cáo như limitation độc lập
