@@ -1,0 +1,14 @@
+﻿numpy==1.26.4
+pandas==2.1.4
+scikit-learn==1.4.0
+torch==2.1.2
+torchaudio==2.1.2
+transformers==4.36.2
+praat-parselmouth==0.4.3
+librosa==0.10.1
+matplotlib==3.8.2
+scipy==1.11.4
+statsmodels==0.14.1
+shap==0.44.0
+pytorch-grad-cam==1.4.8
+tqdm==4.66.1
