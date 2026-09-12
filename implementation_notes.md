@@ -439,7 +439,7 @@ Script: `scripts/04_viz_rq1.py`, output 300 DPI, sẵn sàng cho paper.
 | **Mean** | **0.7629 ± 0.0201** |
 
 **Go/no-go L1.5:** std < 0.08 ✅ (thực tế 0.0201)
-→ Không có fold bất thường. Chuyển sang L2 HPO.
+→ Không có fold bất thường. Chuyển sang L2 HPO (20 trial random search).
 
 -----------------------------------------------------------------------------
 
