@@ -5,7 +5,7 @@ Kien truc theo Muc 4.2 CARVE v5.1:
 - Global Average Pool -> Dropout(0.5) -> FC(256->512->1)
 - Grad-CAM target: feature map sau Conv block 4, shape [B, 256, 16, 25]
 
-Deviation E.6: FC head mo rong tu Linear(256,1) thanh 256->512->1,
+Deviation E.5: FC head mo rong tu Linear(256,1) thanh 256->512->1,
 params tang tu 389k len 521k.
 """
 import torch

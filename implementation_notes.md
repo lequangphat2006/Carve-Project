@@ -463,3 +463,15 @@ Diễn giải: [theo ngưỡng Mục III.2] — pending (block bởi DiCOVA)
 - Loại 38 file failed khỏi phân tích
 - QC report ghi rõ 2 tỉ lệ: 95.3% (tổng) và 98.6% (file hợp lệ)
 - Tỉ lệ < 2% và không có pattern rõ ràng → không cần báo cáo như limitation độc lập
+
+### E.5. DeepFeat FC Head Extension (2026-09-12)
+
+- **Quyết định:** Mở rộng FC head từ `Linear(256, 1)` thành
+  `Linear(256, 512) + ReLU + Dropout + Linear(512, 1)`.
+- **Lý do:** Tài liệu CARVE ước lượng ~1.35M params; conv-only architecture
+  cho 389k. Mở rộng FC head là điều chỉnh defensible vì spec không cố định
+  FC head (chỉ ghi "Linear(256→1)" như mô tả tối thiểu).
+- **Params:** 520,897 (tăng 34% so với 389,057).
+- **Không vi phạm spec:** Conv channels 32→64→128→256 giữ nguyên;
+  Grad-CAM target vẫn là conv4 feature map.
+- **Ảnh hưởng:** Regularization (dropout 0.5, weight_decay) giữ nguyên.
