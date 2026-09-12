@@ -18,6 +18,8 @@
 | A5 | Danh sách baseline RQ2 | Checklist Phần I | ☐ | DiCOVA baseline + top-3 leaderboard + 1 SSL paper |
 | A6 | covid_status: value_counts() + recovered_partial/negative | Checklist Phần I | ☑ | Hoàn thành 2026-09-12. recovered_partial KHÔNG tồn tại. NEGATIVE = {'healthy'}. Xem C.2, E.2 |
 | A7 | Speaker DiCOVA vowel-e: 1 file/speaker | Checklist Phần I | ☐ | |
+| A8 | Branch B (acute-only) đã tách | Stage 1 | ☑ | N=2114, xem C.5 |
+| A9 | Metadata đã join vào feature CSV | Stage 1 | ☑ | covid_status, a, g |
 | B1 | N_B cho A1 (strict) và A2 (broad) + rule chọn | Mục III.1 | ☑ | A1 = 2024, A2 = 2114. Chốt A2 chính, A1 sensitivity. Xem B.1 |
 | B2 | Power analysis TOST tiên nghiệm | Mục III.2 | ☐ | ghi ở mục D |
 | B3 | Seed policy dùng SEED_UNIVERSE, L1 ⊂ L3 | Mục III.3 | ☐ | |
@@ -127,6 +129,25 @@
 - Speaker leakage: [yes/no] — pending
 - Tỉ lệ positive/fold: [min __%, max __%] — pending
 - N/fold: [~240] — pending
+
+### C.4. Stage 1 — Branch split (2026-09-12)
+
+- Branch A (full Coswara): `data/processed/handfeat_coswara_full.csv` (2746 rows, đã thêm covid_status + a + g)
+- Branch B (acute-only): `data/processed/handfeat_coswara_branch_B.csv`
+  - Rows: 2114
+  - Positive (acute): 681
+  - Negative (healthy): 1433
+  - Prevalence: 32.21% (enriched, không phải dân số tự nhiên)
+  - Extraction status: OK 2024 (95.7%), partial 61, failed 29
+- Sensitivity:
+  - A1 (strict): N = 2024
+  - A2 (broad):  N = 2114
+- Feature distribution (OK only, Branch B):
+  - F0_mean: 82.4–466.4 Hz (median 147.4)
+  - jitter_local: 0.07%–12.6% (median 0.70%)
+  - shimmer_local: 0.9%–34.5% (median 5.74%)
+  - hnr_mean: -4.58 to 35.13 dB (median 19.10)
+  - pct_voiced: 0.38%–98.8% (median 58.2)
 
 ---
 
