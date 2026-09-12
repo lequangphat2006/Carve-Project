@@ -357,6 +357,25 @@ phụ thuộc mạnh vào việc các feature khác có mặt trong mô hình ha
 Đây là lý do CARVE yêu cầu audit đầy đủ trước khi diễn giải bất kỳ hệ số nào.
 
 **Ổn định:** pattern giống hệt Branch A và B → không có population-dependence.
+
+### C.8. Stage 5a — Visualizations (2026-09-12)
+
+3 figure đã tạo cho paper:
+
+- **Fig 1** — `results/figures/fig1_effect_sizes.png`
+  Forest plot: univariate (r_rb) vs multivariate (adj logreg coef), 4 features × 2 branches.
+  Mục đích: cho thấy suppression effect (F0 và shimmer đổi dấu).
+
+- **Fig 2** — `results/figures/fig2_commonality.png`
+  Stacked bar: 15 commonality coefficients C_S mỗi branch. Đỏ = shared variance âm (suppression).
+  Mục đích: định lượng suppression pattern.
+
+- **Fig 3** — `results/figures/fig3_r2_progression.png`
+  R² progression khi thêm từng feature (forward selection).
+  Mục đích: cho thấy feature nào đóng góp R² khi vào mô hình.
+
+Script: `scripts/04_viz_rq1.py`, output 300 DPI, sẵn sàng cho paper.
+
 -----------------------------------------------------------------------------
 
 ## D. Power analysis TOST (Bước 0.5)
