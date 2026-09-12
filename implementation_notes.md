@@ -181,42 +181,66 @@
 **Sample (complete-case analysis):** chỉ dùng `extraction_status == 'ok'`
 - Branch A: N = 2163 (796 pos + 1367 neg)
 - Branch B: N = 2024 (657 pos + 1367 neg)
-- Lưu ý: N trong audit khác N trong C.5 (2260/2114) vì đây là complete-case
 
 **Gender distribution (raw):** male = 1810, female = 806, other = 1 (unknown khi encode)
-**Age:** min = 1 (cần check — có thể lỗi metadata), max = 87, missing = 0
+**Age:** min = 1 (cần check), max = 87, missing = 0
 
 ---
 
-#### Finding chính — SIGN FLIP ở cả 4 features sau control age+gender
+#### Lớp 1 — Raw univariate (Mann-Whitney + rank-biserial)
 
-| Feature | Raw r_rb | Cov r_partial | Sign flip |
+Cả 4 features significant sau Holm-Bonferroni ở cả 2 branches.
+Hướng hiệu ứng **ngược sinh lý học**:
+
+| Feature | Raw r_rb | Hướng |
+|---|---|---|
+| F0_mean | −0.1532 | Case có F0 THẤP hơn |
+| jitter_local | −0.2258 | Case có jitter THẤP hơn |
+| shimmer_local | −0.2938 | Case có shimmer THẤP hơn |
+| hnr_mean | +0.1372 | Case có HNR CAO hơn |
+
+→ Case trông có "giọng tốt hơn" người khỏe — bất khả thi về mặt sinh lý.
+
+#### Lớp 2 — Multivariate logistic regression (chuẩn cho y binary)
+
+**Phát hiện ban đầu (partial correlation) là SAI** — partial correlation không
+phù hợp cho outcome binary. Đã verify lại bằng logistic regression (chuẩn y sinh).
+
+**Kết quả logreg — KHÔNG có sign flip:**
+
+| Feature | Raw coef | Adj coef (age+gender) | Sign flip? |
 |---|---|---|---|
-| F0_mean | −0.1532 | +0.0574 | ✅ Đổi dấu |
-| jitter_local | −0.2258 | +0.1117 | ✅ Đổi dấu |
-| shimmer_local | −0.2938 | +0.2046 | ✅ Đổi dấu |
-| hnr_mean | +0.1372 | −0.1276 | ✅ Đổi dấu |
+| F0_mean | +0.2606 | +0.1674 | Không |
+| jitter_local | −0.1738 | −0.1742 | Không |
+| shimmer_local | +0.6229 | +0.6457 | Không |
+| hnr_mean | +0.0966 | +0.1202 | Không |
 
-**TẤT CẢ 4 features đổi dấu** sau khi control age + gender. Đây là **confounder reversal** — hiện tượng hiếm gặp và rất mạnh về mặt phương pháp luận.
+→ **Confounding effect KHÔNG mạnh.** Raw coef và adjusted coef cùng dấu, magnitude
+thay đổi nhẹ. Không có "confounder reversal".
 
-**Diễn giải sinh lý học:**
+Covariate coef (adjusted): age = +0.4265, gender_bin = −0.2157
+→ Age effect mạnh, đúng sinh lý (giọng già có jitter/shimmer cao).
 
-- **Raw test:** bệnh nhân (COVID case) có jitter/shimmer **THẤP hơn** người khỏe → nhìn có vẻ "giọng tốt hơn"; HNR **CAO hơn** → nhìn có vẻ "giọng sạch hơn"
-- **Vô lý sinh lý học:** bệnh hô hấp phải làm giọng xấu đi
-- **Sau control age + gender:** bệnh nhân có jitter/shimmer **CAO hơn** → đúng sinh lý (giọng bất ổn); HNR **THẤP hơn** → đúng sinh lý (nhiễu cao hơn)
+#### Lớp 3 — Suppression effect (univariate vs multivariate)
 
-**Nguyên nhân confound:**
-- Coswara: male = 1810, female = 806 → lệch giới tính
-- Jitter/shimmer tăng theo tuổi (lão hoá giọng)
-- Nhóm healthy già hơn nhóm case (COVID ảnh hưởng nhiều người trẻ)
-- → Raw: case (trẻ) có jitter/shimmer thấp hơn healthy (già) → hiệu ứng ngược
-- → Control: hiệu ứng thật lộ ra
+Phát hiện **thật** — có suppression giữa các features:
 
-**Ý nghĩa cho CARVE:** Đây là luận điểm cốt lõi — handcrafted features trông "có ý nghĩa thống kê" nhưng **hướng hiệu ứng sai** nếu không kiểm soát confounder. Kết quả này là bằng chứng định lượng mạnh cho paper.
+| Feature | r_rb (univariate) | logreg coef (multivariate) | Đồng dấu? |
+|---|---|---|---|
+| F0_mean | −0.1532 | +0.2606 | ❌ NGƯỢC |
+| jitter_local | −0.2258 | −0.1738 | ✅ cùng |
+| shimmer_local | −0.2938 | +0.6229 | ❌ NGƯỢC |
+| hnr_mean | +0.1372 | +0.0966 | ✅ cùng |
 
----
+**Nguyên nhân:** F0, jitter, shimmer, HNR tương quan với nhau (đặc biệt jitter
+và shimmer share cycle-to-cycle perturbation variance). Khi đưa vào multivariate,
+F0 và shimmer giữ lại variance khác → đảo dấu hệ số.
 
-#### VIF — không cần dominance analysis
+**Ý nghĩa cho CARVE:** Đây là finding quan trọng hơn sign flip — handcrafted
+features không độc lập, "hiệu ứng đơn biến" và "hiệu ứng độc lập" khác dấu.
+Điều này củng cố luận điểm CARVE: đọc trực tiếp hệ số đơn biến là misleading.
+
+#### Lớp 4 — VIF: max = 3.109 < 5
 
 | Feature | VIF |
 |---|---|
@@ -224,41 +248,33 @@
 | jitter_local | 2.168 |
 | shimmer_local | 3.109 |
 | hnr_mean | 2.691 |
-| **max** | **3.109** |
 
-**max VIF = 3.109 < 5** → theo rule chốt trước (Mục III.9), **KHÔNG cần dominance analysis**. Đọc trực tiếp hệ số hồi quy. Đây là tin tốt — đơn giản hóa phần trình bày kết quả.
+**max VIF = 3.109 < 5** → theo rule Mục III.9, **không cần dominance analysis**.
 
----
+#### A vs B: ổn định
 
-#### A vs B — ổn định hoàn toàn
+Kết quả logreg raw và adjusted ổn định giữa Branch A và B → scenario (iii).
+Không có population-dependence rõ rệt.
 
-| Chỉ số | Branch A (acute+recovered) | Branch B (acute-only) |
-|---|---|---|
-| N | 2163 | 2024 |
-| F0 raw r_rb | −0.1532 | −0.1427 |
-| jitter raw r_rb | −0.2258 | −0.2311 |
-| shimmer raw r_rb | −0.2938 | −0.3076 |
-| hnr raw r_rb | +0.1372 | +0.1379 |
-| Tất cả flip sign? | ✅ | ✅ |
+#### Sai methodology đã sửa
 
-**Kết luận:** ổn định qua 2 định nghĩa population → scenario (iii) của CARVE: **không có population-dependence**. Kết luận validity robust với cách định nghĩa nhóm bệnh.
+- Ban đầu dùng partial correlation (Pearson trên residuals) → cho sign flip giả
+- Lỗi: partial corr giả định y liên tục, không phù hợp y binary
+- Sửa: dùng logistic regression (chuẩn y sinh) → xác nhận KHÔNG có sign flip
+- Bài học: verify bằng 2 phương pháp trước khi commit finding vào paper
 
----
+#### Issues nhỏ
 
-#### Issues nhỏ cần xử lý sau
-
-1. **1 sample `age = 1`** — có thể lỗi metadata. Cần check speaker_id cụ thể và loại nếu cần.
-2. **1 sample `gender = 'other'`** — encode thành NaN khi chạy partial correlation → bị loại khỏi lớp 2 (N giảm 2163 → 2162). Không ảnh hưởng lớn, chỉ cần note.
-3. **N discrepancy** giữa audit (2163/2024) và C.5 (2260/2114): do audit chỉ dùng `extraction_status == 'ok'`. Cần note rõ đây là complete-case analysis đúng thiết kế.
-
----
+1. 1 sample `age = 1` — cần check và loại (đã loại trong verify logreg)
+2. 1 sample `gender = 'other'` — encode NaN, bị loại ở lớp 2
+3. N discrepancy giữa audit (2163/2024) và C.5 (2260/2114): do complete-case
 
 #### File output
 
 - `results/audit_rq1_branch_A.csv`
 - `results/audit_rq1_branch_B.csv`
 - `results/audit_rq1_summary.json`
----
+- `results/audit_rq1_logreg_verify.csv`
 
 ## D. Power analysis TOST (Bước 0.5)
 
