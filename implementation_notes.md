@@ -48,6 +48,16 @@
 - EXCLUDED = {'resp_illness_not_identified', 'under_validation'}
 - Phân tích chính: A2. Sensitivity: A1.
 - Quyết định: A2 (N_B = 2114). A1 (N_B = 2024) làm sensitivity.
+### B.1b. Branch A definition (chốt trước Stage 5a, 2026-09-12)
+
+- **Branch A:** positive = ACUTE_BROAD ∪ RECOVERED; negative = NEGATIVE
+  - N = 2260 (827 positive + 1433 negative)
+  - Lý do: để scenario (i) của CARVE (population-dependence) kiểm chứng được,
+    Branch A phải chứa recovered như "case" — A vs B khác đúng 1 biến
+- **Branch B:** positive = ACUTE_BROAD; negative = NEGATIVE
+  - N = 2114 (681 positive + 1433 negative) — không đổi
+- **Exposed (248) + EXCLUDED (238):** loại khỏi cả A và B
+  - Lý do: exposed là category thứ ba, không thuộc binary case/control
 
 ### B.2. Ngưỡng thống kê chốt trước
 
