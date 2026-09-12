@@ -376,6 +376,28 @@ phụ thuộc mạnh vào việc các feature khác có mặt trong mô hình ha
 
 Script: `scripts/04_viz_rq1.py`, output 300 DPI, sẵn sàng cho paper.
 
+### C.9. Stage 2 — L0 Smoke Test PASS (2026-09-12)
+
+**Môi trường:** Kaggle Notebook, GPU T4x2, Python 3.12.
+
+**Kết quả:**
+- Audio dir: 1 ngày Coswara (20200413)
+- Pre-filter: 74 valid, 2 skipped (corrupt/silent)
+- Train 59 / Val 15 (label fake random)
+- Mel shape verify: `(8, 1, 128, 500)` ✅
+- DeepFeat params: 520,897
+- Train 2 epochs: không NaN, loss giảm nhẹ
+- ROC-AUC ~0.39 (label fake → expected random)
+- CAM shape: `(1, 1, 16, 62)` — hệ quả T=500 (spec ghi 16×25 với T=200)
+- CAM uniform: expected vì model chưa học
+
+**Kết luận:** pipeline chạy end-to-end. Sẵn sàng cho L1 pilot (data thật + label thật).
+
+**Fix gặp:**
+1. `spec_aug` → `spec_augment` (tên tham số)
+2. `torchaudio.load` crash với file 0 samples → defensive load
+3. Pre-filter với `soundfile.info` loại file corrupt trước khi vào DataLoader
+
 -----------------------------------------------------------------------------
 
 ## D. Power analysis TOST (Bước 0.5)
