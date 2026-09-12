@@ -94,7 +94,9 @@
 | covid_status unique | 8 giá trị | **8 giá trị** (khác tên, xem E.2) | ✅ (khác nội dung) |
 | test_status unique | 4 giá trị | **5 giá trị** (thêm '' empty) | ⚠️ |
 | Speaker dup DiCOVA | 1 file/speaker | pending | — |
-| Missing age/gender | <5% | **chưa đo** | — |
+| Missing age/gender | <5% | **0.0% cả hai** | ✅ |
+
+**Ghi chú:** missing rate age/gender = 0% (đầy đủ). Không cần xử lý missing cho covariate. Report JSON: `results/logs/validate_report_20260912_040554.json`.
 
 ### C.2. Metadata audit (Bước 0.3)
 
