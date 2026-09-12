@@ -240,3 +240,11 @@ Diễn giải: [theo ngưỡng Mục III.2]
 
 | | | | |
 
+### F. Deviations from Original Data Plan
+
+- **Date:** 2026-09-12
+- **Issue:** The DiCOVA 2021 Interspeech Special Session registration form is closed, blocking direct access to the official Track-2 dataset.
+- **Decision:** [Chọn một trong hai]
+    - **Option A:** Emailed `dicova2021@gmail.com` to request access. (Pending response)
+    - **Option B:** Will proceed by replicating the DiCOVA Track-2 curation process using the original public Coswara dataset, as permitted by the challenge terms[reference:3].
+- **Impact:** [Ghi rõ ảnh hưởng, ví dụ: "This may introduce minor differences compared to using the official curated dataset, but will be documented as a limitation."]
